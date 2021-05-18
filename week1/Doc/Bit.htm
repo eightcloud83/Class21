@@ -1,0 +1,181 @@
+﻿<html>
+<head>
+<style>
+    .mTerm {
+        font-weight: bold;
+        color: blue;
+    }
+</style>
+</head>
+<pre>
+一般電腦<a href="#digicomputer">#1</a>最基本處理的資料為0與1,
+  用 電的有無(電壓,電流) 代表1,0 (在電腦裏的運行, CPU,記憶體)
+  或 磁的正負, (磁碟機)
+  或 光的反射與否, (光碟機)
+  .....
+
+
+(通常在電腦會用 <font color="red">^</font> 代表<font color="red">次方</font>, 2的2次方寫為 2^2, 2的3次方寫外 2^3)
+<span class="mTerm">Bit(位元)</span>
+一個 0,1 的變化, 稱之為 1Bit,
+  2bit 就有   4 種變化, 2<font color="red">^</font>2, 00,01,10,11, 2的2次方.
+  3bit 就有   8 種變化, 2^3, 000,001,010,011,100,100,101,110,111 2的3次方,
+  4bit 就有  16 種變化, 2^4
+  7bit 就有 128 種變化, 2^7
+  8bit 就有 256 種變化, 2^8
+
+(通常在電腦會用 * 代表乘, / 代表除)
+<span class="mTerm">Byte(位元組)</span>
+  8 個 bit, 又會稱為 1個 Byte,
+  這個是電腦最基本的儲存單位.
+  說一台電腦是 32Bit, 指的是一次可以處理 32bit 的資料 (+,-,*,/)
+  在文件中, 通常小寫 b 會代表 bit, 大寫 B 是代表 Byte,
+  例如:
+      1. 行動通訊技術 2G 峰值速率 10 Kbps,  3G 3.8 峰值速率 Mbps,
+         這邊的 b 都代表 bit. (k 約為1000, M 是百萬, 10K是 10*1000=1萬, 10Kbps 是每秒傳1萬bit)
+      2. iPhone 12 (128GB)
+         B 代表的是 Byte (G是1000M)
+
+<span class="mTerm">二進位(Binary)</span>
+我們會用一個數值來代表狀能,
+  例如, 一個 4bit 的資料, 會有 16 種變化, 就用 0 到 15 來代表, 稱之為二進位
+   0 代表 0000
+   1 代表 0001  0*(2^2)+0*(2^1)+0*(2^0)
+   2 代表 0010  0*(2^2)+1*(2^1)+0*(2^0)
+   4 代表 0100  1*(2^2)+0*(2^1)+0*(2^0)
+   5 代表 0101  1*(2^2)+0*(2^1)+1*(2^0)
+   6 代表 0110  1*(2^2)+1*(2^1)+0*(2^0)
+   7 代表 0111  1*(2^2)+1*(2^1)+1*(2^0)
+   8 代表 1000  1*(2^3)
+  10 代表 1010
+  14 代表 1110
+  15 代表 1111
+
+<span class="mTerm">十六進位(Hex)</span>
+當8bit資料, 就有 256 種變化, 可代表數值 0 到 255,
+  因為一個人類習慣的十進位數值比較難轉換到bit組態,
+  又會用一個十六進位的方式代表一個4個bit的值,
+  用字母的 a 代表 10, b 代表 11, c 代表 12, d 代表 13, e 代表 14, f 代表 15.
+  而習慣上, 當用 16 進位的數字時, 會在前面加上 0x 的字串.
+  所以會說 0xa=10  0xb=11 0xc=13 0xd=14 0xf=15
+  一個Byte=8bit的值就可以用2個16進位的digit來代表
+  0x10=16    1*(16^1)+ 0*(16^0)
+  0x11=17    1*(16^1)+ 1*(16^0)
+  0x1a=26    1*(16^1)+10*(16^0)
+  0x1f=31    1*(16^1)+15*(16^0)
+  0x20=32    2*(16^1)+ 0*(16^0)
+  0x80=128   8*(16^1)+ 0*(16^0)
+  0xff=255  15*(16^1)+15*(16^0)  (8bit最大值)
+***
+ 0x101=257   1*(16^2)+ 1*(16^0)  (9bit)
+
+
+--
+補充
+--
+<a name="digicomputer">#1
+一般電腦指數位電腦
+量子電腦不屬於這裏一般電腦的定義
+</a>
+
+--
+
+<a name="naturalnum">#2
+0 不是正整數,
+自然數, 一般是指含0及正整數, (但在數學界還有一些不同看法),
+
+https://en.wikipedia.org/wiki/Natural_number
+
+Some definitions, including the standard ISO 80000-2,[4][a] begin the natural numbers <font color=red>with 0</font>, corresponding to the non-negative integers 
+others <font color="red">start with 1</font>, corresponding to the positive integers 1, 2, 3, ..
+
+<ul><li>Naturals without zero: <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;">
+<math xmlns="http://www.w3.org/1998/Math/MathML" alttext="{\displaystyle \{1,2,...\}=\mathbb {N} ^{*}=\mathbb {N} ^{+}=\mathbb {N} _{0}\smallsetminus \{0\}.}">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mo fence="false" stretchy="false">{</mo>
+<mn>1</mn><mo>,</mo><mn>2</mn><mo>,</mo><mo>.</mo><mo>.</mo><mo>.</mo><mo fence="false" stretchy="false">}</mo>
+<mo>=</mo>
+<msup>
+<mrow class="MJX-TeXAtom-ORD"><mi mathvariant="double-struck">N</mi></mrow>
+<mrow class="MJX-TeXAtom-ORD"><mo>∗<!-- ∗ --></mo></mrow>
+        </msup>
+<mo>=</mo>
+<msup>
+<mrow class="MJX-TeXAtom-ORD"><mi mathvariant="double-struck">N</mi></mrow>
+<mrow class="MJX-TeXAtom-ORD"><mo>+</mo></mrow>
+        </msup>
+<mo>=</mo>
+<msub>
+<mrow class="MJX-TeXAtom-ORD"><mi mathvariant="double-struck">N</mi></mrow>
+<mrow class="MJX-TeXAtom-ORD"><mn>0</mn></mrow>
+        </msub>
+<mo>∖<!-- ∖ --></mo><mo fence="false" stretchy="false">{</mo><mn>0</mn><mo fence="false" stretchy="false">}</mo><mo>.</mo>
+      </mstyle>
+    </mrow>
+<annotation encoding="application/x-tex">{\displaystyle \{1,2,...\}=\mathbb {N} ^{*}=\mathbb {N} ^{+}=\mathbb {N} _{0}\smallsetminus \{0\}.}</annotation>
+  </semantics>
+</math></span><img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/43bb238802d8dd7e2f8978a06e1471c070143730" class="mwe-math-fallback-image-inline" aria-hidden="true" style="vertical-align: -0.838ex; width:34.743ex; height:3.009ex;" alt="{\displaystyle \{1,2,...\}=\mathbb {N} ^{*}=\mathbb {N} ^{+}=\mathbb {N} _{0}\smallsetminus \{0\}.}">
+</span></li><li>Naturals with zero: <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math xmlns="http://www.w3.org/1998/Math/MathML" alttext="{\displaystyle \;\{0,1,2,...\}=\mathbb {N} _{0}=\mathbb {N} ^{0}=\mathbb {N} ^{*}\cup \{0\}}">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mspace width="thickmathspace"></mspace>
+<mo fence="false" stretchy="false">{</mo>
+<mn>0</mn>
+<mo>,</mo>
+<mn>1</mn>
+<mo>,</mo>
+<mn>2</mn>
+<mo>,</mo>
+<mo>.</mo>
+<mo>.</mo>
+<mo>.</mo>
+<mo fence="false" stretchy="false">}</mo>
+<mo>=</mo>
+<msub>
+<mrow class="MJX-TeXAtom-ORD">
+<mi mathvariant="double-struck">N</mi>
+          </mrow>
+<mrow class="MJX-TeXAtom-ORD">
+<mn>0</mn>
+          </mrow>
+        </msub>
+<mo>=</mo>
+<msup>
+<mrow class="MJX-TeXAtom-ORD">
+<mi mathvariant="double-struck">N</mi>
+          </mrow>
+<mrow class="MJX-TeXAtom-ORD">
+<mn>0</mn>
+          </mrow>
+        </msup>
+<mo>=</mo>
+<msup>
+<mrow class="MJX-TeXAtom-ORD">
+<mi mathvariant="double-struck">N</mi>
+          </mrow>
+<mrow class="MJX-TeXAtom-ORD">
+<mo>∗<!-- ∗ --></mo>
+          </mrow>
+        </msup>
+<mo>∪<!-- ∪ --></mo>
+<mo fence="false" stretchy="false">{</mo>
+<mn>0</mn>
+<mo fence="false" stretchy="false">}</mo>
+      </mstyle>
+    </mrow>
+<annotation encoding="application/x-tex">{\displaystyle \;\{0,1,2,...\}=\mathbb {N} _{0}=\mathbb {N} ^{0}=\mathbb {N} ^{*}\cup \{0\}}</annotation>
+  </semantics>
+</math></span><img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/5ce4ab27eef4b83e333756d7b0a69c4ff3b4b57c" class="mwe-math-fallback-image-inline" aria-hidden="true" style="vertical-align: -0.838ex; width:36.223ex; height:3.176ex;" alt="{\displaystyle \;\{0,1,2,...\}=\mathbb {N} _{0}=\mathbb {N} ^{0}=\mathbb {N} ^{*}\cup \{0\}}"></span></li></ul>
+
+https://zh.wikipedia.org/wiki/%E8%87%AA%E7%84%B6%E6%95%B0
+19世紀末，集合論者給自然數一個較嚴謹的定義。據此定義，把零（對應於空集）包括於自然數內更為方便。邏輯論者及計算機科學家，接受集合論者的定義。而其他一些數學家，主要是數論學家，則依從傳統把零拒之於自然數之外。
+在全球範圍內，目前針對0是否屬於自然數的爭論依舊存在。
+在全球範圍內，目前針對0是否屬於自然數的爭論依舊存在。
+在中國大陸，2000年左右之前的中小學教材一般不將0列入自然數之內，或稱其屬於「擴大的自然數列」[5]。在2000年左右之後的新版中小學教材中，普遍將0列入自然數。
+</a>
+
+</pre>
+</html>

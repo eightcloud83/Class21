@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+<script>
+async function aSleep(ms) {
+    return new Promise(R => setTimeout(R, ms));
+}
+
+function jGenStar(n,m) {
+    var out="";
+    nspace=m-n;
+    for(j=0; j<nspace; j++)
+        out=out+" ";
+    nstar=2*n-1;
+    for(j=0; j<nstar; j++)
+        out=out+"*";
+    for(j=0; j<nspace; j++)
+        out=out+" ";
+    return out;
+}
+
+function jGenStarA(A,m) {
+    var n=m-A.length;
+    var i;
+    var out="";
+    for (i=0; i<n; i++)
+        out=out+"\n";
+    n=A.length;
+    for (i=0; i<n; i++) {
+        var w=A[n-i-1];
+        out=out+jGenStar(w,m)+"\n";
+    }
+    return out;
+}
+
+var gM=7;
+var gN=0;
+function jShow(V)
+{
+    var A=V[1];
+    var vid="iC"+V[0];
+    var out=jGenStarA(A,gM);
+    var x=document.getElementById(vid);
+    x.innerText=out;
+}
+async function jShowA(A,B,C)
+{
+    await aSleep(100);
+    jShow(A);
+    jShow(B);
+    jShow(C);
+    document.getElementById('iMv').innerText=""+gN;
+}
+
+async function jMove(VSrc,VTgt,VTmp,n) {
+    var A=VSrc[1];
+    if (n==1) {
+        var w=A.pop();
+        VTgt[1].push(w);
+        gN++;
+        await jShowA(VSrc,VTgt,VTmp);
+        return;
+    }
+    await jMove(VSrc,VTmp,VTgt,n-1);
+    await jMove(VSrc,VTgt,VTmp,1);
+    await jMove(VTmp,VTgt,VSrc,n-1);
+}
+
+async function jMain() {
+    document.getElementById('iN').innerText=""+6;
+    var A1=[1,[7,6,5,4,3,2,1]];
+    var A2=[2,[]];
+    var A3=[3,[]];
+    jShow(A1);
+    jShow(A2);
+    jShow(A3);
+    await jMove(A1,A3,A2,7);
+}
+window.addEventListener("load", function(){
+    jMain();
+});
+</script>
+</head>
+<body>
+    <pre>
+https://www.w3.org/TR/dom41/
+https://www.w3schools.com/js/js_htmldom.asp
+    </pre>
+    Hello!!
+<table border=1>
+<tr><td width="100px" align=center>
+A1
+</td><td width="100px" align=center>
+A2
+</td><td width="100px" align=center>
+A3
+</td></tr>
+<tr><td align=center>
+    <pre id='iC1'></pre>
+</td><td align=center>
+    <pre id='iC2'></pre>
+</td><td align=center>
+    <pre id='iC3'></pre>
+</td></tr></table>
+<pre> n=<span id='iN'></span>, move count=<span id='iMv'></span></pre>
+</body>
+</html>

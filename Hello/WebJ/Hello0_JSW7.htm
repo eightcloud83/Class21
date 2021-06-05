@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+<script>
+async function aSleep(ms) {
+    return new Promise(R => setTimeout(R, ms));
+}
+
+function jGenStar(n,m) {
+    var out="";
+    nspace=m-n;
+    for(j=0; j<nspace; j++)
+        out=out+" ";
+    nstar=2*n-1;
+    for(j=0; j<nstar; j++)
+        out=out+"*";
+    for(j=0; j<nspace; j++)
+        out=out+" ";
+    return out;
+}
+
+
+function jGenStarA(A,m) {
+    var n=m-A.length;
+    var i;
+    var out="";
+    for (i=0; i<n; i++)
+        out=out+"\n";
+    n=A.length;
+    for (i=0; i<n; i++) {
+        var w=A[n-i-1];
+        out=out+jGenStar(w,m)+"\n";
+    }
+    return out;
+}
+
+function Tower(name,n) {
+    var T=this;
+    T.maxN=n;
+    T.N=name;
+    T.A=[];
+    T.add=function(v) {T.A.push(v);}
+    T.rm=function() {return T.A.pop();}
+    T.show=function() {
+        var o=jGenStarA(T.A,T.maxN);
+        document.getElementById(T.N).innerText=o;
+    }
+    T.num=function() {return T.A.length;}
+}
+
+
+var gTowerS=[];
+var gN=0;
+var gWait;
+async function jShowA()
+{
+    await aSleep(gWait);
+    var i;
+    for(i=0; i<3; i++)
+        gTowerS[i].show();
+    document.getElementById('iMv').innerText=""+gN;
+}
+
+async function jMove(VSrc,VTgt,VTmp,n) {
+    if (n==1) {
+        var w=VSrc.rm();
+        VTgt.add(w);
+        gN++;
+        await jShowA();
+        return;
+    }
+    await jMove(VSrc,VTmp,VTgt,n-1);
+    await jMove(VSrc,VTgt,VTmp,1);
+    await jMove(VTmp,VTgt,VSrc,n-1);
+}
+
+async function jHan(n) {
+    gN=0;
+    document.getElementById('iN').innerText=""+n;
+    var i;
+    for(i=0; i<3; i++)
+        gTowerS[i]=new Tower('iT'+(i+1),n);
+    for(i=n; i>=1; i--)
+        gTowerS[0].add(i);
+    await jShowA();
+    await jMove(gTowerS[0],gTowerS[2],gTowerS[1],n);
+}
+async function jMain() {
+    gWait=1000;
+    var m=400;
+    for(i=3; i<=7; i++){
+        await jHan(i);
+        await aSleep(2000);
+        gWait-=m; m=100;
+    }
+}
+window.addEventListener("load", function(){
+    jMain();
+});
+</script>
+</head>
+<body>
+    <pre>
+<a href=https://sites.google.com/a/g2.nctu.edu.tw/unimath/2017-11/Hanoi>g2.nctu.edu.tw/unimath/2017-11/Hanoi-河內塔</a>
+    </pre>
+    Hello!!
+<table border=1>
+<tr><td width="100px" align=center>
+A1
+</td><td width="100px" align=center>
+A2
+</td><td width="100px" align=center>
+A3
+</td></tr>
+<tr><td align=center>
+    <pre id='iT1'></pre>
+</td><td align=center>
+    <pre id='iT2'></pre>
+</td><td align=center>
+    <pre id='iT3'></pre>
+</td></tr></table>
+<pre> n=<span id='iN'></span>, move count=<span id='iMv'></span></pre>
+<img width="320px" src="https://sites.google.com/a/g2.nctu.edu.tw/unimath/manuscript/hanoi/n%3D3.jpg?attredirects=0">
+</body>
+</html>

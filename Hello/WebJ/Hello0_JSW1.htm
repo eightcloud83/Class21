@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+<script>
+function jMain(m) {
+    var i,j,nspace,nstar;
+    var out="";
+    for(i=1; i<=m; i++) {
+        nspace=m-i;
+        for(j=0; j<nspace; j++)
+            out=out+" ";
+        nstar=2*i-1;
+        for(j=0; j<nstar; j++)
+            out=out+"*";
+        out+="\n";
+    }
+    var x=document.getElementById("iConsole");
+    x.innerText=out;
+}
+window.addEventListener("load", function(){
+    jMain(5);
+});
+</script>
+</head>
+<body>
+    <pre>
+https://www.w3.org/TR/dom41/
+https://www.w3schools.com/js/js_htmldom.asp
+    </pre>
+    Hello!!
+    <pre id='iConsole'></pre>
+</body>
+</html>

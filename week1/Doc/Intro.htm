@@ -1,0 +1,434 @@
+﻿<html>
+<head>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<style>
+.sTree div {
+    padding-left:30px;
+}
+.sTree_ECIcon {
+    font-size:24px; vertical-align:bottom;
+}
+</style>
+<script src="../../3rd/jquery-1.12.4.js"></script>
+<script src="../../js/mMain.js"></script>
+<script>
+var oFocus=[];
+
+
+function jTest() {
+    $('#iRoot').children().each( function() {
+        $(this).children("div").hide();
+    });
+}
+//IP for IdPrefix, JIP '#'+IP (for jquery id)
+function zTree(v) {
+    var T=this;
+    T.mIP=v;
+    T.mJIP='#'+v;
+    T.mTnId=0;
+    T.mTnLl=1;
+    T.mStat=[];
+    T.mTnS=[];  //PT,PV,LC,NX
+    T.BuildTree=function(o,vPt,vPv) {
+        o.attr('id',T.mIP+T.mTnId);
+        o.hide();
+        let tt=T.mTnId;
+        T.mTnId++;
+        let o1=$(o.children()[0]);
+        o1.addClass('sSub');
+        o1.attr("tabindex",T.mTnLl);
+        if (o.children("div").length==0) {
+            o1.html("<i class='material-icons sTree_ECIcon'>horizontal_rule</i>" + o1.html());
+            T.mStat[tt]=4;
+            T.mTnLl++;
+            T.mTnS[tt] = [vPt, vPv, -1, T.mTnId];
+        }
+        else {
+            T.mStat[tt]=0;
+            o1.html("<i class='material-icons sTree_ECIcon'>arrow_right</i>" + o1.html());
+            T.mTnLl++;
+            T.mTnS[tt]=[vPt, vPv];
+            let tRet=-1;
+            o.children("div").each( function() {
+                tRet=T.BuildTree($(this),tt,tRet);
+            });
+            T.mTnS[tt][2]=tRet;
+            T.mTnS[tt][3]=T.mTnId;
+            T.mTnLl--;
+        }
+        return tt;
+    }
+    T.tnFCd=function(id) {
+        let n=id+1;
+        if (n==T.mTnId)
+            return 0;
+        if (id!=T.mTnS[n][0])
+            return 0;
+        return n;
+    }
+    T.ChkAndExpand=function (id) {
+        var s=T.mStat[id];
+        if ((s&2)==2) return;
+        if (T.tnFCd(id)==0) return;
+        var o=$(T.mJIP+id);
+        o.children("div").show();
+        o.children("span").children("i").html("arrow_drop_down");
+        T.mStat[id]|=2;
+    }
+    T.TnExpand=function(id) {
+        var o=$(T.mJIP+id);
+        o.children("div").show();
+        o.children("span").children("i").html("arrow_right");
+        T.mStat[id]|=2;
+    }
+    T.EvtFocus=function(o) {
+        var id=eval(o.parent().attr("id").substring(3));
+        $('#iMsg').html("*"+id+","+T.mStat[id]);
+        T.mStat[id]^=1;
+        T.ChkAndExpand(id);
+    }
+    T.EvtKey=function(o,k) {
+        var o0 = o.parent();
+        var id=eval(o0.attr("id").substring(3));
+        $('#iMsg').html("*"+id+","+k);
+        if (k==32) {
+            var o=$(T.mJIP+id);
+            var s=T.mStat[id];
+            if ((s&4)!=0) return 0;
+            if ((s&2)==2) {
+                o.children("div").hide();
+                o.children("span").children("i").html("arrow_right");
+            }
+            else {
+                o.children("div").show();
+                o.children("span").children("i").html("arrow_drop_down");
+            }
+            T.mStat[id]=s^2;
+            return 0;
+        }
+        if (k==40) {    //D
+            if (id<=0)
+                return 0;
+            let nbid=T.mTnS[id][3];
+            let wid=id+1
+            if (nbid>wid) {
+                var s=T.mStat[id];
+                if ((s&2)==0)
+                    wid=nbid;
+            }
+            /*
+            let wid=T.mTnS[id][3];
+            let pid=T.mTnS[id][0];
+            if (wid>=T.mTnS[pid][3])
+                return 0;
+            */
+            o=$(T.mJIP+wid+' .sSub')[0];
+            o.focus();
+            return 0;
+        }
+        if (k==38) {    //U
+            let wid=T.mTnS[id][1];
+            if (wid>0)  {
+                while(true){
+                    if ((T.mStat[wid]&2)==0)
+                        break;
+                    wid=T.mTnS[wid][2];
+                }
+            }
+            else {
+                wid=T.mTnS[id][0];
+                if (wid<0)
+                    return;
+            }
+            o=$(T.mJIP+wid+' .sSub')[0];
+            o.focus();
+            return 0;
+        }
+        if (k==39) {    //R
+            let wid=id+1;
+            if (wid>=T.mTnId)
+                return 0;
+            if (T.mTnS[wid][0]!=id)
+                return 0;
+            if ((T.mStat[id]&2) == 0) {            
+                o0.children("div").show();
+                o0.children("span").children("i").html("arrow_drop_down");
+                T.mStat[id]|=2;
+            }
+            o=$(T.mJIP+wid+' .sSub')[0];
+            o.focus();
+            return 0;
+        }
+        if (k==37) {    //L
+            if ((T.mStat[id]&2)!=0) {            
+                o0.children("div").hide();
+                o0.children("span").children("i").html("arrow_right");
+                T.mStat[id]^=2;
+                return 0;
+            }
+            let wid=T.mTnS[id][0];
+            if (wid<=0)
+                return 0;
+            o=$(T.mJIP+wid+' .sSub')[0];
+            o.focus();
+            return 0;
+        }
+        return 1;
+    }
+}
+
+function zTree_VW(v,vTnS) {
+    var T=this;
+    T.mIP=v;
+    T.mJIP='#'+v;
+    T.mTnS=vTnS;
+    T.uInitTree=function() {
+        var ha,h,tnb,tw;
+        ha="";
+        h="<div id='"+T.mIP+"0'><span class='sSub'>root</span></div>"
+        ha+=h;
+        tnb=T.mTnS[0][3];
+        tw=1;
+        while(true) {
+            if (!tw || tw>=tnb)
+                break;
+            h="<div id='"+T.mIP+tw+"'><span class='sSub'>"+tw+"</span></div>";
+            ha+=h;
+            tw=T.mTnS[tw][3];
+        }
+        return ha;
+    }
+    T.TnExpand=function(id) {
+        var o=$(T.mJIP+id);
+        o.children("div").show();
+        o.children("span").children("i").html("arrow_right");
+        T.mStat[id]|=2;
+    }
+    T.EvtFocus=function(o) {
+        var id=eval(o.parent().attr("id").substring(3));
+        $('#iMsg').html("*"+id+","+T.mStat[id]);
+        T.mStat[id]^=1;
+    }
+    T.EvtKey=function(o,k) {
+        var o0 = o.parent();
+        var id=eval(o0.attr("id").substring(3));
+        $('#iMsg').html("*"+id+","+k);
+        if (k==32) {
+            var o=$(T.mJIP+id);
+            var s=T.mStat[id];
+            if ((s&4)!=0) return 0;
+            if ((s&2)==2) {
+                o.children("div").hide();
+                o.children("span").children("i").html("arrow_right");
+            }
+            else {
+                o.children("div").show();
+                o.children("span").children("i").html("arrow_drop_down");
+            }
+            T.mStat[id]=s^2;
+            return 0;
+        }
+        if (k==40) {
+            if (id<=0)
+                return 0;
+            let wid=T.mTnS[id][3];
+            let pid=T.mTnS[id][0];
+            if (wid>=T.mTnS[pid][3])
+                return 0;
+            o=$(T.mJIP+wid+' .sSub')[0];
+            o.focus();
+            return 0;
+        }
+        if (k==38) {
+            let wid=T.mTnS[id][1];
+            if (wid<=0)
+                return;
+            o=$(T.mJIP+wid+' .sSub')[0];
+            o.focus();
+            return 0;
+        }
+        if (k==39) {
+            let wid=id+1;
+            if (wid>=T.mTnId)
+                return 0;
+            if (T.mTnS[wid][0]!=id)
+                return 0;
+            if ((T.mStat[id]&2) == 0) {            
+                o0.children("div").show();
+                o0.children("span").children("i").html("arrow_drop_down");
+                T.mStat[id]|=2;
+            }
+            o=$(T.mJIP+wid+' .sSub')[0];
+            o.focus();
+        }
+        if (k==37) {
+            let wid=T.mTnS[id][0];
+            if (wid<=0)
+                return 0;
+            o=$(T.mJIP+wid+' .sSub')[0];
+            o.focus();
+        }
+        return 1;
+    }
+}
+
+function jMain() {
+    var run=new zTree("iTN");
+    run.BuildTree($('#iRoot'),-1,-1);
+    $('#iTN0 .sSub').on("focusin", function(e) {
+        //$('#iMsg').html($(this).text());
+        run.EvtFocus($(this));
+    });
+    $('#iTN0 .sSub').on("keydown", function(e) {
+        //$('#iMsg').html($(this).text());
+        if (run.EvtKey($(this), e.which) == 0) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    });
+    $('#iTN0').show();
+    run.TnExpand(0);
+
+    var runV=new zTree_VW("vTN",run.mTnS);
+    var h=runV.uInitTree();
+    $('#iTreeV').html(h);
+}
+
+</script>
+</head>
+<body>
+
+
+<pre>
+程式設計 (Computer_programming)
+    用程式語言溝通,叫電腦做事
+    用程式語言寫在可以在電腦上執行的程式, 電腦按照程式的執行做事.
+    <a href="https://en.wikipedia.org/wiki/Computer_programming">Computer_programming</a>
+       "Computer programming is the process of designing and building an executable computer program to accomplish a specific computing result or to perform a specific task"
+          一個流程, 設計建立一個可執行的電腦程式, 用來完成計算結果, 或是特定的工作,
+    
+程式語言 (Programming_languae)
+    c/c++, java, python, javascript, ....  <a href="https://www.tiobe.com/tiobe-index/?fbclid=1">tobe-index</a>
+    高階/低階 高階-人看的懂的, 低階-電腦看的懂的(機器) <a href="https://terms.naer.edu.tw/detail/1679421/">教育學院</a>
+    <a href="https://en.wikipedia.org/wiki/Programming_language">Programming_languae</a>  
+         "A programming language is a formal language comprising a set of strings that produce various kinds of machine code output."
+         一些符何規範的字串(人看的懂的), 可以轉成機器碼(machine code, 機器碼, 電腦的懂的 程式)
+           一些符何規範的字串-原始碼(source code, text)
+           機器碼(exe, binary code, app)
+
+IDE (Intergrated Develop Envrionment 整合開發環境)
+   編輯-建罝-除錯 (安裝-版本控制....)
+   Visual Studio 2019 Community
+   demo
+
+介紹程式設計以及其中的 C 語言
+介紹 IDE (整合開發)
+安裝 Visual Studio (2019) 及設定寫 C 程式的環境
+
+參考清華雲上的先修課程
+https://mooc.nthu.edu.tw/course/info/70
+程式設計導論 
+介紹 C 語言程式設計基本技巧，修完之後能具備足夠的程式設計能力，以銜接更進階的課程。
+https://mooc.nthu.edu.tw/course/info/69
+資訊工程導論 
+https://mooc.nthu.edu.tw/course/info/71
+Python語言程式入門
+</pre>
+
+Ref:<br/>
+<i class="material-icons">horizontal_rule</i>
+<i class="material-icons">expand_less</i>
+<i class="material-icons">expand_more</i>
+<div style="position: relative; margin:0 auto;">
+<table style="width:100%"><tr><td>
+<div id='iRoot' class='sTree'><span style="display:none"></span>
+    <div><span>什麼是程式設計</span>
+       <div><span>用程式語言,寫出可以在電腦上執行的程式,按照你的意思做事</span></div>
+       <div><span>程式設計-wiki:<a href=https://en.wikipedia.org/wiki/Computer_programming>Computer_programming</a></span></div>
+       <div><span>程式語言-wiki:<span><a href=https://en.wikipedia.org/wiki/Programming_language>Programming_languae</a></span></div>
+    </div>
+    <div><span class='sSub' tabindex=1>程式語言有那些</span>
+       <div> <span>c/c++, java, python, javascript, ....</span></div>
+       <div> <span><a href="https://www.benfrederickson.com/ranking-programming-languages-by-github-users/">githubusers</a>-by-benfrederickson</span></div>
+       <div> <span><a href="https://www.tiobe.com/tiobe-index/?fbclid=1">tobe-index</a></span></div>
+       <div> <span><a href="https://insights.stackoverflow.com/survey/2020?fbclid=1#most-popular-technologies">stackoverflow</a></span></div>
+       <div> <span>中階?的C語言</span>
+             <div><span><a href="https://terms.naer.edu.tw/detail/1679421/">教育學院</a>: 在電腦科學的領域裡，
+                               <br>凡是電腦語言與人類語言相近者稱為高階語言(High-Level Language)；
+                               <br>而把與人類語言相距較遠，但與機械語言較相近者稱為低階語言(Low-Level Language)。
+                               <br>C語言正是介於二者之間之中階語言。
+                               <br>&nbsp;&nbsp; 它擁有高階語言的多種資料型態及高度的可攜性(Portability)，
+                               <br>&nbsp;&nbsp; 以及低階語言直接操作位元(Bits)、位元組(Bytes)、及位址(Address)的能力，可謂身兼二者之長。</span></div>
+             <div><span><a href="https://dywang.csie.cyut.edu.tw/dywang/clanguage/node20.html">朝陽</a>: C 語言應屬高階語言，但因高階語言如 python, java, perl 等物件導向程式語言，直接使用 c 編譯好的函式庫。所以某些講法稱 c 為中階語言。</span></div>
+             <div><span><a href="https://zh.wikipedia.org/wiki/%E4%BD%8E%E7%BA%A7%E8%AF%AD%E8%A8%80">wiki</a> ?-沒有中階的存在, 只有低階/高階.  有點是相對性的, 而不是絕對性的 (低階.. 大陸叫低級... 嗯...)</span></div>
+        </div>
+       <div> <span>圖像化程式語言-SCRATCH</span>
+             <div><span><a href="https://www.facebook.com/cyberbuzz/posts/10153005560621566/">Inside 硬塞的網路趨勢觀察</a>: Scratch 是一套圖像化程式設計語言（Visual Programming Language)
+                               <br>凡是電腦語言與人類語言相近者稱為高階語言(High-Level Language)；
+                               <br>而把與人類語言相距較遠，但與機械語言較相近者稱為低階語言(Low-Level Language)。
+                               <br>C語言正是介於二者之間之中階語言。
+                               <br>&nbsp;&nbsp; 它擁有高階語言的多種資料型態及高度的可攜性(Portability)，
+                               <br>&nbsp;&nbsp; 以及低階語言直接操作位元(Bits)、位元組(Bytes)、及位址(Address)的能力，可謂身兼二者之長。</span></div>
+             <div><span><a href="https://dywang.csie.cyut.edu.tw/dywang/clanguage/node20.html">朝陽</a>: C 語言應屬高階語言，但因高階語言如 python, java, perl 等物件導向程式語言，直接使用 c 編譯好的函式庫。所以某些講法稱 c 為中階語言。</span></div>
+             <div><span><a href="https://zh.wikipedia.org/wiki/%E4%BD%8E%E7%BA%A7%E8%AF%AD%E8%A8%80">wiki</a> ?-沒有中階的存在, 只有低階/高階.  有點是相對性的, 而不是絕對性的 (低階.. 大陸叫低級... 嗯...)</span></div>
+        </div>
+
+    </div>
+    <div><span tabindex=1>程式設計要學什麼</span>
+        <div> <span>A:有實用實作:學程式語言及相關平台</span>
+             <div><span><a href=https://insights.stackoverflow.com/survey/2020?fbclid=1#correlated-technologies>stackoverflow</a></span></div>
+             <div><span> Ex: 用 javascript 寫 Web網頁程式</span></div>
+             <div><span> Ex: 用 python 寫 樂高EV3機器人</span></div>
+             <div><span> Ex: 用 java 寫 Android 手機軟體</span></div>
+        </div>
+        <div> <span>A:特定的目標-學測檢定等</span>
+            <div><span> 參考 <a href=http://www.cc.ntu.edu.tw/chinese/epaper/0038/20160920_3802.html>一個程式師媽媽的嘆息-兒童程式教育之我見</a> by 唐瑤瑤/臺灣大學計算機及資訊網路中心程式設計組程式設計師 @ 2016</span></div>
+            <div> <span> <a href='https://apcs.csie.ntnu.edu.tw/'>APCS-大學程式先修檢測</a> </span>
+                <div><span> <a href=https://apcs.csie.ntnu.edu.tw/index.php/questionstypes/previousexam/>歷次試題</a></span></div>
+                <div><span> <a href=https://apcs.csie.ntnu.edu.tw/wp-content/uploads/2018/12/1061028APCSImplementation.pdf>程式實作題-2017.10.28</a> (c,c++,java,python) </span></div>
+                <div><span> =&gt; <a href=https://openhome.cc/Gossip/CGossip/> 語言技術：C 語言 </a> 資料型態與變數,運算,流程控制 / 陣列 / 函式</span> </div>
+            </div>
+            <div> <span> <a href='https://cpe.cse.nsysu.edu.tw/'>CPE-大學程式能力檢定</a> </span>
+                <div><span> <a href=https://cpe.cse.nsysu.edu.tw/history.php>歷次試題</a></span></div>
+                <div><span> <a href=https://cpe.cse.nsysu.edu.tw/environment.php>環境與教材</a> gcc,vc++express(c,c++) jdk(java) </span></div>
+            </div>
+        </div>
+    </div>
+    <div><span>學程式設計要有什麼準備</span>
+        <div> <span> 電腦 (Ex: Windows10 x64 4GBram, PC or NB)  </span> </div>
+        <div> <span> 軟體: 編輯, 建罝, 執行/除錯 , IDE(整合開發環境) </span> 
+            <div> <span> Visua lStudio (IDE)</span> 
+                <div> <span> Community 為非商用免費, 需要 email 註冊 Microsoft(oAuth) 帳號 </span> </div>
+                <div> <span> MS 技術開發平台  </span> </div>
+                <div> <span> c/c++, c#(Asp.net), NodeJs, Python  </span> </div>
+            </div>
+            <div> <span> Visual Studio Code</span> 
+                <div> <span> OpenSource </span> </div>
+                <div> <span> 主體是編輯工具, 但透各種 plug-in, 支援多樣開發平台 </span> </div>
+                <div> <span> 有各種平台的版本, Windows, MacOS, Linux </span> </div>
+                <div> <span> <a href=https://code.visualstudio.com/docs/languages/html> 支援語言 </a></span>
+                    <div> <span> <a href=https://code.visualstudio.com/docs/cpp/config-msvc> microsoft 平台 c++ sdk</a> by visual studio (IDE) intaller </span></div>
+                    <div> <span> gcc @ windows,  @ MinGW, WinowsSubsystemForLinux(@Win10 x64)  </span></div>
+                    <div> <span> gcc @ Linux(Mac)  </span></div>
+                 </div>
+                <div> <span> Python with 樂高 EV3  </span> </div>
+            </div>
+            <div> <span> Androdid Studio</span> 
+                <div> <span> Java for Android 平台  </span> </div>
+            </div>
+            <div> <span> Notepad + WebBrowser</span> 
+                <div> <span> Javascript Web 前端開發 </span> </div>
+            </div>
+        </div>
+    </div>
+</div>
+</td><td>
+<div id='iTreeV' class='sTree'>
+</div>
+
+</td></tr></table>
+
+</pre>
+</div>
+</body>
+</html>

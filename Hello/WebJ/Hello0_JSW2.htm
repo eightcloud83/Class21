@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+<script>
+
+function jGenStar(n,m) {
+    var out="";
+    nspace=m-n;
+    for(j=0; j<nspace; j++)
+        out=out+" ";
+    nstar=2*n-1;
+    for(j=0; j<nstar; j++)
+        out=out+"*";
+    return out;
+}
+
+function jMain() {
+    var out="";
+    for(i=1; i<=5; i++) {
+        out+=jGenStar(i,5)+"\n";
+    }
+    var x=document.getElementById("iConsole");
+    x.innerText=out;
+}
+window.addEventListener("load", function(){
+    jMain();
+});
+</script>
+</head>
+<body>
+    <pre>
+https://www.w3.org/TR/dom41/
+https://www.w3schools.com/js/js_htmldom.asp
+    </pre>
+    Hello!!
+    <pre id='iConsole'></pre>
+</body>
+</html>
